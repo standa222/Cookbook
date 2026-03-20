@@ -53,15 +53,32 @@ For the network communication phase (Part A4), the application will interface wi
 ### **JSON Schema Example**
 ```json
 {
-    "id": 1,
-    "title": "Classic Pancakes",
-    "category": "Sweet",
-    "ingredients": [
-        { "name": "Flour", "amount": "200g" },
-        { "name": "Milk", "amount": "300ml" }
-    ],
-    "instructions": [
-        { "stepNumber": 1, "description": "Whisk dry ingredients." },
-        { "stepNumber": 2, "description": "Add milk and eggs." }
-    ]
+  "id": 101,
+  "title": "Homemade Pizza",
+  "description": "A classic thin-crust Italian pizza.",
+  "prepTimeMinutes": 45,
+  "category": "Savory",
+  "isFavorite": false,
+  "ingredients": [
+    {
+      "name": "Flour",
+      "amount": "500g"
+    },
+    {
+      "name": "Dry Yeast",
+      "amount": "7g"
+    }
+  ],
+  "instructions": [
+    {
+      "stepNumber": 1,
+      "description": "Mix flour, yeast, and water in a large bowl.",
+      "timerDurationMinutes": 10
+    },
+    {
+      "stepNumber": 2,
+      "description": "Knead the dough until smooth.",
+      "timerDurationMinutes": null
+    }
+  ]
 }
