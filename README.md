@@ -1,5 +1,7 @@
 # Project Description - Cookbook
 
+Project can be accessed in gitlab at https://gitlab.fel.cvut.cz/sadilsta/zan-sadilsta
+
 ## 1. Application Description
 The main purpose of the application is to help users manage and organize their personal recipes. This includes both recording the ingredients (with desired quantity) and a step-by-step description of the whole cooking process. The application operates primarily offline using a local database, ensuring that cooking instructions are always accessible in the kitchen, regardless of internet connectivity.
 
