@@ -5,6 +5,8 @@ Project can be accessed in gitlab at https://gitlab.fel.cvut.cz/sadilsta/zan-sad
 ## 1. Application Description
 The main purpose of the application is to help users manage and organize their personal recipes. This includes both recording the ingredients (with desired quantity) and a step-by-step description of the whole cooking process. The application operates primarily offline using a local database, ensuring that cooking instructions are always accessible in the kitchen, regardless of internet connectivity.
 
+Users can filter the recipes and organize them into categories. They can also add new recipes, which includes defining the required ingredients and describing the cooking process.
+
 ### Target Users
 * **Home Cooks:** Individuals looking to digitalize their family recipes.
 * **Meal Planners:** Users who need to filter recipes or search for specific ingredients.
