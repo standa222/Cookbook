@@ -1,4 +1,4 @@
-package cz.cvut.fel.zan.cookbook.ui.theme
+package cz.cvut.fel.zan.cookbook.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
