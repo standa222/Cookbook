@@ -8,9 +8,13 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 kotlin = "2.3.20"
 composeBom = "2026.03.01"
+materialIconsCore = "1.7.8"
 room = "2.8.4"
 ksp = "2.3.6"
-koin = "4.0.0"
+koin = "4.2.1"
+navigationCompose = "2.9.7"
+androidxNavigation        = "2.8.8"
+kotlinxSerializationJson  = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,15 +31,19 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+androidx-navigation-compose  = { group = "androidx.navigation",    name = "navigation-compose",       version.ref = "androidxNavigation" }
+kotlinx-serialization-json   = { group = "org.jetbrains.kotlinx",  name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
