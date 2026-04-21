@@ -5,9 +5,9 @@ data class Recipe(
     val title: String,
     val description: String,
     val category: Category,
-    val imageUrl: String,
+//    val imageUrl: String,
     val prepTime: Int, // in minutes
     val ingredients: List<Ingredient> = emptyList(),
-    val instructions: List<InstructionStep> = emptyList(),
+    val instructionSteps: List<InstructionStep> = emptyList(),
     val isFavorite: Boolean = false,
 )
