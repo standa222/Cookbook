@@ -23,9 +23,14 @@ data class IngredientEntity(
             childColumns = ["recipeId"],
             onDelete = ForeignKey.CASCADE
         ),
-        ForeignKey(entity = IngredientEntity::class, parentColumns = ["id"], childColumns = ["ingredientId"], onDelete = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = IngredientEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["ingredientId"],
+            onDelete = ForeignKey.CASCADE
+        )
     ],
-    indices = [Index("recipeId")],
+    indices = [Index("recipeId"), Index("ingredientId")],
 )
 data class RecipeIngredientEntity(
     @PrimaryKey(autoGenerate = true)
