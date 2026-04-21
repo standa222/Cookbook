@@ -35,7 +35,7 @@ data class FullRecipe(
         parentColumn = "id", // RecipeEntity.id
         entityColumn = "id", // IngredientEntity.id
         associateBy = Junction(
-            value = RecipeIngredient::class,
+            value = RecipeIngredientEntity::class,
             parentColumn = "recipeId",
             entityColumn = "ingredientId"
         )
@@ -49,7 +49,16 @@ fun FullRecipe.toRecipe() = Recipe(
     description = recipe.description,
     category = recipe.category,
     prepTime = recipe.prepTime,
-    ingredients = ingredients.map { it.toIngredient() },
+    ingredients = ingredients.map { it.toRecipeIngredient() },
     instructionSteps = steps.sortedBy { it.stepNumber }.map { it.toInstructionStep() },
     isFavorite = recipe.isFavorite
+)
+
+fun Recipe.toEntity() = RecipeEntity(
+    id = id,
+    title = title,
+    description = description,
+    category = category,
+    prepTime = prepTime,
+    isFavorite = isFavorite
 )
