@@ -1,7 +1,7 @@
 package cz.cvut.fel.zan.cookbook.core.data.model
 
 enum class Category {
-    SWEET, SAVORY, BAKING, SOUP, SALAD, DRINK, OTHER
+    SWEET, SAVORY, BAKING, SOUP, SALAD, DRINK, OTHER, DEFAULT
 }
 
 fun Category.label(): String = when (this) {
@@ -12,4 +12,5 @@ fun Category.label(): String = when (this) {
     Category.SALAD -> "Salad"
     Category.DRINK -> "Drink"
     Category.OTHER -> "Other"
+    Category.DEFAULT -> ""
 }

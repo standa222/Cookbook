@@ -1,8 +1,6 @@
 package cz.cvut.fel.zan.cookbook.core.data.model
 
-data class RecipeIngredient(
+data class Ingredient(
     val id: Long,
-    val ingredientId: Long,
-    val name: String,
-    val quantity: String
+    val name: String
 )

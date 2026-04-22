@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import cz.cvut.fel.zan.cookbook.core.data.model.Ingredient
 import cz.cvut.fel.zan.cookbook.core.data.model.RecipeIngredient
 
 @Entity(tableName = "ingredients")
@@ -56,4 +57,9 @@ fun IngredientWithQuantity.toRecipeIngredient() = RecipeIngredient(
     ingredientId = ingredient.id,
     name = ingredient.name,
     quantity = link.quantity
+)
+
+fun IngredientEntity.toIngredient() = Ingredient(
+    id = id,
+    name = name,
 )
