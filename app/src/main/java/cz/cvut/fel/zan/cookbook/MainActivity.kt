@@ -24,8 +24,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cz.cvut.fel.zan.cookbook.core.navigation.IngredientListRoute
+import cz.cvut.fel.zan.cookbook.core.navigation.RecipeEditorRoute
+import cz.cvut.fel.zan.cookbook.core.navigation.RecipeIngredients
 import cz.cvut.fel.zan.cookbook.core.navigation.RecipeListRoute
 import cz.cvut.fel.zan.cookbook.core.ui.theme.CookbookTheme
+import cz.cvut.fel.zan.cookbook.feature.recipeeditor.RecipeEditorScreen
 import cz.cvut.fel.zan.cookbook.feature.recipelist.RecipeListScreen
 
 class MainActivity : ComponentActivity() {
@@ -84,9 +87,13 @@ fun CookbookMain() {
         ) {
             composable<RecipeListRoute> {
                 RecipeListScreen(
-//                    onNavigateToDetail = { id ->
-//                        navController.navigate(RecipeDetailRoute(id))
-//                    }
+                    onNavigateToDetail = { id -> navController.navigate(RecipeIngredients(id)) },
+                    onNavigateToEditor = { id -> navController.navigate(RecipeEditorRoute(id)) },
+                )
+            }
+            composable<RecipeEditorRoute> {
+                RecipeEditorScreen(
+                    onNavigateUp = { navController.navigateUp() }
                 )
             }
 //            composable<IngredientListRoute> {
