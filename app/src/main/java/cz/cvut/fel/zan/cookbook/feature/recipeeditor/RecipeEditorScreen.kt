@@ -153,15 +153,6 @@ fun RecipeEditorScreen(
                             }
                         }
                     }
-
-                    OutlinedTextField(
-                        value = state.prepTime,
-                        onValueChange = { viewModel.onEvent(RecipeEditorEvent.PrepTimeChanged(it)) },
-                        label = { Text("Total Mins") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(0.6f),
-                        singleLine = true
-                    )
                 }
             }
 

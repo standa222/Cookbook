@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import cz.cvut.fel.zan.cookbook.core.data.model.Ingredient
+import cz.cvut.fel.zan.cookbook.core.data.model.IngredientUsageCount
 import cz.cvut.fel.zan.cookbook.core.data.model.RecipeIngredient
 
 @Entity(tableName = "ingredients")
@@ -62,4 +63,16 @@ fun IngredientWithQuantity.toRecipeIngredient() = RecipeIngredient(
 fun IngredientEntity.toIngredient() = Ingredient(
     id = id,
     name = name,
+)
+
+data class IngredientUsageCountEntity(
+    val ingredientId: Long,
+    val name: String,
+    val recipeCount: Int,
+)
+
+fun IngredientUsageCountEntity.toIngredientUsageCount() = IngredientUsageCount(
+    id = ingredientId,
+    name = name,
+    recipeCount = recipeCount,
 )

@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import kotlin.jvm.Throws
 
 @Dao
 interface IngredientDao {
@@ -19,4 +18,18 @@ interface IngredientDao {
     @Transaction
     @Query("SELECT * FROM ingredients WHERE name LIKE '%' || :query || '%'")
     fun searchByName(query: String): Flow<List<IngredientEntity>>
+
+    @Query(
+        """
+        SELECT i.id AS ingredientId,
+               i.name AS name,
+               COUNT(DISTINCT ri.recipeId) AS recipeCount
+        FROM ingredients i
+        LEFT JOIN recipe_ingredient ri ON ri.ingredientId = i.id
+        WHERE i.name LIKE '%' || :query || '%'
+        GROUP BY i.id
+        ORDER BY i.name COLLATE NOCASE
+        """
+    )
+    fun searchWithRecipeCount(query: String): Flow<List<IngredientUsageCountEntity>>
 }

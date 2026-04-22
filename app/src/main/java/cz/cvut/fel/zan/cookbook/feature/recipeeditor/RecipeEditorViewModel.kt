@@ -28,7 +28,6 @@ data class RecipeEditorUiState(
     val title: String = "",
     val description: String = "",
     val category: Category = Category.DEFAULT,
-    val prepTime: String = "",
     val ingredients: List<RecipeIngredient> = emptyList(),
     val steps: List<InstructionStep> = emptyList(),
     val isEditMode: Boolean = false,
@@ -40,7 +39,6 @@ sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
     data class CategoryChanged(val category: Category) : RecipeEditorEvent
-    data class PrepTimeChanged(val prepTime: String) : RecipeEditorEvent
 
     // Ingredient Events
     data class IngredientNameChanged(val index: Int, val name: String) : RecipeEditorEvent
@@ -92,7 +90,6 @@ class RecipeEditorViewModel(
                             title = recipe.title,
                             description = recipe.description,
                             category = recipe.category,
-                            prepTime = recipe.prepTime.toString(),
                             ingredients = recipe.ingredients,
                             steps = recipe.instructionSteps,
                             isEditMode = true,
@@ -113,9 +110,6 @@ class RecipeEditorViewModel(
             }
             is RecipeEditorEvent.CategoryChanged -> {
                 uiState = uiState.copy(category = event.category)
-            }
-            is RecipeEditorEvent.PrepTimeChanged -> {
-                uiState = uiState.copy(prepTime = event.prepTime)
             }
 
             // --- Ingredient Logic ---
@@ -156,7 +150,7 @@ class RecipeEditorViewModel(
                 if (event.prepTime.all { it.isDigit() } || event.prepTime.isEmpty()) { // digits only
                     val newList = uiState.steps.toMutableList()
                     newList[event.index] = newList[event.index].copy(
-                        prepTime = event.prepTime.toIntOrNull() ?: 0
+                        prepTime = (event.prepTime.toIntOrNull() ?: 0).coerceAtLeast(0)
                     )
                     uiState = uiState.copy(steps = newList)
                 }
@@ -181,12 +175,14 @@ class RecipeEditorViewModel(
         if (!uiState.isValid || uiState.isSaving) return
         uiState = uiState.copy(isSaving = true)
 
+        val computedPrepTime = uiState.steps.sumOf { it.prepTime.coerceAtLeast(0) }
+
         val recipe = Recipe(
             id = recipeId ?: 0L,
             title = uiState.title.trim(),
             description = uiState.description.trim(),
             category = uiState.category,
-            prepTime = uiState.prepTime.toIntOrNull() ?: 0,
+            prepTime = computedPrepTime,
             ingredients = uiState.ingredients,
             instructionSteps = uiState.steps,
         )
@@ -215,7 +211,6 @@ class RecipeEditorViewModel(
         uiState = uiState.copy(
             isValid = uiState.title.isNotBlank()
                     && uiState.description.isNotBlank()
-                    && uiState.prepTime.toIntOrNull() != null
                     && areIngredientsValid
                     && areStepsValid
                     && uiState.category != Category.DEFAULT

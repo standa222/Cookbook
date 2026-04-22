@@ -45,8 +45,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.cvut.fel.zan.cookbook.R
 import cz.cvut.fel.zan.cookbook.core.data.model.Category
 import cz.cvut.fel.zan.cookbook.core.data.model.Recipe
 import org.koin.androidx.compose.koinViewModel
@@ -117,7 +119,7 @@ private fun RecipeListContent(
                 OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = { onEvent(RecipeListEvent.SearchQueryChanged(it)) },
-                    label = { Text("Search Recipesss") },
+                    label = { Text("Search Recipes") },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -218,7 +220,7 @@ private fun RecipeCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(recipe.title, style = MaterialTheme.typography.titleMedium)
-                Text(recipe.description, style = MaterialTheme.typography.bodySmall, maxLines = 1)
+                Text(countPrepTime(recipe.prepTime), style = MaterialTheme.typography.bodySmall, maxLines = 1)
             }
 
             IconButton(onClick = onFavouriteClick) {
@@ -230,6 +232,12 @@ private fun RecipeCard(
             }
         }
     }
+}
+
+private fun countPrepTime(prepTime: Int): String {
+    val hours = prepTime / 60
+    val minutes = prepTime % 60
+    return if (hours > 0) "Prep time: $hours hours $minutes minutes" else "Prep time: $minutes minutes"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -247,7 +255,7 @@ private fun SelectionTopBar(
             IconButton(onClick = onClearSelection) { Icon(Icons.Default.Close, null) }
         },
         actions = {
-            IconButton(onClick = onSelectAll) { Icon(Icons.Default.Check, "Select All") }
+            IconButton(onClick = onSelectAll) { Icon(painterResource(R.drawable.done_all_24px), "Select All") }
             IconButton(onClick = onFavouriteSelected) { Icon(Icons.Default.Favorite, "Fav Selected") }
             IconButton(onClick = onDeleteSelected) { Icon(Icons.Default.Delete, "Delete Selected") }
         },

@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,6 +30,7 @@ import cz.cvut.fel.zan.cookbook.core.navigation.RecipeEditorRoute
 import cz.cvut.fel.zan.cookbook.core.navigation.RecipeIngredients
 import cz.cvut.fel.zan.cookbook.core.navigation.RecipeListRoute
 import cz.cvut.fel.zan.cookbook.core.ui.theme.CookbookTheme
+import cz.cvut.fel.zan.cookbook.feature.ingredientlist.IngredientListScreen
 import cz.cvut.fel.zan.cookbook.feature.recipeeditor.RecipeEditorScreen
 import cz.cvut.fel.zan.cookbook.feature.recipelist.RecipeListScreen
 
@@ -48,8 +51,8 @@ fun CookbookMain() {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val bottomNavItems = listOf(
-        Triple(RecipeListRoute, "Recipes", Icons.Default.Menu),
-        Triple(IngredientListRoute, "Ingredients", Icons.Default.ShoppingCart),
+        Triple(RecipeListRoute, "Recipes", R.drawable.chef_hat_24px),
+        Triple(IngredientListRoute, "Ingredients", R.drawable.shopping_cart_24px),
     )
 
     Scaffold(
@@ -73,7 +76,7 @@ fun CookbookMain() {
                                 restoreState = true
                             }
                         },
-                        icon = { Icon(icon, contentDescription = label) },
+                        icon = { Icon(painterResource(icon), contentDescription = label) },
                         label = { Text(label) },
                     )
                 }
@@ -96,15 +99,9 @@ fun CookbookMain() {
                     onNavigateUp = { navController.navigateUp() }
                 )
             }
-//            composable<IngredientListRoute> {
-//                IngredientListScreen()
-//            }
-//
-//            composable<RecipeDetailRoute> {
-//                RecipeDetailScreen(
-//                    onNavigateUp = { navController.navigateUp() }
-//                )
-//            }
+            composable<IngredientListRoute> {
+                IngredientListScreen()
+            }
         }
     }
 }
