@@ -2,6 +2,8 @@ package cz.cvut.fel.zan.cookbook.di
 
 import androidx.room.Room
 import cz.cvut.fel.zan.cookbook.core.data.database.AppDatabase
+import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepository
+import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepositoryImpl
 import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepository
 import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepositoryImpl
 import org.koin.android.ext.koin.androidContext
@@ -32,6 +34,12 @@ val appModule = module {
             recipeDao = get(),
             ingredientDao = get(),
             // TODO A4 Network - REST API
+        )
+    }
+
+    single<IngredientRepository> {
+        IngredientRepositoryImpl(
+            ingredientDao = get(),
         )
     }
 }

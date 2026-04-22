@@ -12,6 +12,7 @@ import cz.cvut.fel.zan.cookbook.core.data.model.InstructionStep
 import cz.cvut.fel.zan.cookbook.core.data.model.Recipe
 import cz.cvut.fel.zan.cookbook.core.data.model.RecipeIngredient
 import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepository
+import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +61,7 @@ sealed interface RecipeEditorEvent {
 class RecipeEditorViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: RecipeRepository,
+    private val ingredientRepository: IngredientRepository,
 ) : ViewModel() {
 
     private val _ingredientQuery = MutableStateFlow("")
@@ -68,7 +70,7 @@ class RecipeEditorViewModel(
         .filter { it.length >= 2 }
         .distinctUntilChanged()
         .flatMapLatest { query ->
-            repository.searchIngredients(query)
+            ingredientRepository.searchIngredients(query)
         }
         .stateIn(
             scope = viewModelScope,

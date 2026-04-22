@@ -28,8 +28,14 @@ interface IngredientDao {
         LEFT JOIN recipe_ingredient ri ON ri.ingredientId = i.id
         WHERE i.name LIKE '%' || :query || '%'
         GROUP BY i.id
-        ORDER BY i.name COLLATE NOCASE
+        ORDER BY i.name
         """
     )
     fun searchWithRecipeCount(query: String): Flow<List<IngredientUsageCountEntity>>
+
+    @Query("SELECT COUNT(DISTINCT recipeId) FROM recipe_ingredient WHERE ingredientId = :ingredientId")
+    suspend fun getRecipeUsageCount(ingredientId: Long): Int
+
+    @Query("DELETE FROM ingredients WHERE id = :id")
+    suspend fun deleteById(id: Long): Int
 }

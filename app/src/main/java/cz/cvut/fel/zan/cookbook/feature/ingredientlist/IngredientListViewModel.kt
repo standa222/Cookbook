@@ -3,8 +3,9 @@ package cz.cvut.fel.zan.cookbook.feature.ingredientlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fel.zan.cookbook.core.data.model.IngredientUsageCount
-import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepository
+import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +45,7 @@ sealed interface IngredientListEvent {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class IngredientListViewModel(
-    private val repository: RecipeRepository,
+    private val repository: IngredientRepository,
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -102,8 +103,12 @@ class IngredientListViewModel(
             }
 
             is IngredientListEvent.DeleteIngredient -> {
-                // TODO: implement actual delete in repository/DAO later.
-                // For now, no-op.
+                viewModelScope.launch {
+                    val deleted = repository.deleteIngredientIfUnused(event.id)
+                    if (deleted) {
+                        _selectedIds.update { it - event.id }
+                    }
+                }
             }
 
             IngredientListEvent.MergeSelected -> {

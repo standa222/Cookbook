@@ -2,14 +2,10 @@ package cz.cvut.fel.zan.cookbook.core.data.repository
 
 import cz.cvut.fel.zan.cookbook.core.data.database.IngredientDao
 import cz.cvut.fel.zan.cookbook.core.data.database.IngredientEntity
-import cz.cvut.fel.zan.cookbook.core.data.database.IngredientUsageCountEntity
 import cz.cvut.fel.zan.cookbook.core.data.database.RecipeDao
 import cz.cvut.fel.zan.cookbook.core.data.database.RecipeIngredientEntity
 import cz.cvut.fel.zan.cookbook.core.data.database.toEntity
-import cz.cvut.fel.zan.cookbook.core.data.database.toIngredient
 import cz.cvut.fel.zan.cookbook.core.data.database.toRecipe
-import cz.cvut.fel.zan.cookbook.core.data.model.Ingredient
-import cz.cvut.fel.zan.cookbook.core.data.model.IngredientUsageCount
 import cz.cvut.fel.zan.cookbook.core.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -92,17 +88,5 @@ class RecipeRepositoryImpl(
 
     override suspend fun setFavourite(ids: Set<Long>) {
         recipeDao.setFavourite(ids.toList())
-    }
-
-    override fun searchIngredients(query: String): Flow<List<Ingredient>> {
-        return ingredientDao.searchByName(query).map { list ->
-            list.map { it.toIngredient() }
-        }
-    }
-
-    override fun searchIngredientsWithRecipeCount(query: String): Flow<List<IngredientUsageCount>> {
-        return ingredientDao.searchWithRecipeCount(query).map { list: List<IngredientUsageCountEntity> ->
-            list.map { IngredientUsageCount(id = it.ingredientId, name = it.name, recipeCount = it.recipeCount) }
-        }
     }
 }
