@@ -3,6 +3,7 @@ package cz.cvut.fel.zan.cookbook.core.data.repository
 import cz.cvut.fel.zan.cookbook.core.data.database.IngredientDao
 import cz.cvut.fel.zan.cookbook.core.data.database.IngredientUsageCountEntity
 import cz.cvut.fel.zan.cookbook.core.data.database.toIngredient
+import cz.cvut.fel.zan.cookbook.core.data.database.toIngredientUsageCount
 import cz.cvut.fel.zan.cookbook.core.data.model.Ingredient
 import cz.cvut.fel.zan.cookbook.core.data.model.IngredientUsageCount
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ class IngredientRepositoryImpl(
 
     override fun searchIngredientsWithRecipeCount(query: String): Flow<List<IngredientUsageCount>> {
         return ingredientDao.searchWithRecipeCount(query).map { list: List<IngredientUsageCountEntity> ->
-            list.map { IngredientUsageCount(id = it.ingredientId, name = it.name, recipeCount = it.recipeCount) }
+            list.map { it.toIngredientUsageCount() }
         }
     }
 
