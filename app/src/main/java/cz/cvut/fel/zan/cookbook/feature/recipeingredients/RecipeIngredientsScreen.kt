@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,6 +38,7 @@ import org.koin.androidx.compose.koinViewModel
 fun RecipeIngredientsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToSteps: (Long) -> Unit,
+    onNavigateToEdit: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecipeIngredientsViewModel = koinViewModel(),
 ) {
@@ -65,7 +68,24 @@ fun RecipeIngredientsScreen(
                             IconButton(onClick = onNavigateUp) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }
-                        }
+                        },
+                        actions = {
+                            IconButton(onClick = { onNavigateToEdit(recipe.id) }) {
+                                Icon(Icons.Filled.Edit, contentDescription = "Edit recipe")
+                            }
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(RecipeIngredientsEvent.DeleteRecipe)
+                                    onNavigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete recipe",
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        },
                     )
                 },
                 modifier = modifier,

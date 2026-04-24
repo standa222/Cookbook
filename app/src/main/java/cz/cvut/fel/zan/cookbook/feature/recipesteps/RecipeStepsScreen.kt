@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,6 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 fun RecipeStepsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToIngredients: (Long) -> Unit,
+    onNavigateToEdit: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecipeStepsViewModel = koinViewModel(),
 ) {
@@ -64,7 +67,24 @@ fun RecipeStepsScreen(
                             IconButton(onClick = onNavigateUp) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }
-                        }
+                        },
+                        actions = {
+                            IconButton(onClick = { onNavigateToEdit(recipe.id) }) {
+                                Icon(Icons.Filled.Edit, contentDescription = "Edit recipe")
+                            }
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(RecipeStepsEvent.DeleteRecipe)
+                                    onNavigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete recipe",
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        },
                     )
                 },
                 modifier = modifier,

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -297,7 +296,11 @@ fun StepEditCard(
             ) {
                 Text("Step ${index + 1}", style = MaterialTheme.typography.labelLarge)
                 IconButton(onClick = onRemove, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Close, "Remove Step")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Remove Step",
+                        tint = MaterialTheme.colorScheme.error,
+                    )
                 }
             }
 

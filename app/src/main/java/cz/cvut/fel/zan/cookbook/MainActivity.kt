@@ -180,6 +180,9 @@ fun CookbookMain() {
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToEdit = { id ->
+                        navController.navigate(RecipeEditorRoute(id))
+                    },
                 )
             }
             composable<RecipeStepsRoute> {
@@ -195,6 +198,9 @@ fun CookbookMain() {
                             restoreState = true
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToEdit = { id ->
+                        navController.navigate(RecipeEditorRoute(id))
                     },
                 )
             }

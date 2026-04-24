@@ -10,11 +10,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 sealed interface RecipeIngredientsUiState {
     data object Loading : RecipeIngredientsUiState
     data class Content(val recipe: Recipe) : RecipeIngredientsUiState
     data class Error(val message: String) : RecipeIngredientsUiState
+}
+
+sealed interface RecipeIngredientsEvent {
+    data object DeleteRecipe : RecipeIngredientsEvent
 }
 
 class RecipeIngredientsViewModel(
@@ -35,5 +40,14 @@ class RecipeIngredientsViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = RecipeIngredientsUiState.Loading,
         )
-}
 
+    fun onEvent(event: RecipeIngredientsEvent) {
+        when (event) {
+            RecipeIngredientsEvent.DeleteRecipe -> {
+                viewModelScope.launch {
+                    repository.deleteRecipesByIds(setOf(recipeId))
+                }
+            }
+        }
+    }
+}
