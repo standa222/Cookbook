@@ -2,6 +2,7 @@ package cz.cvut.fel.zan.cookbook.feature.recipelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cvut.fel.zan.cookbook.core.data.ApiResult
 import cz.cvut.fel.zan.cookbook.core.data.model.Category
 import cz.cvut.fel.zan.cookbook.core.data.model.RecipeIngredient
 import cz.cvut.fel.zan.cookbook.core.data.model.Recipe
@@ -9,6 +10,7 @@ import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -47,6 +49,15 @@ class RecipeListViewModel(
     private val _showFavouritesOnly = MutableStateFlow(false)
     private val _selectedCategories = MutableStateFlow(emptySet<Category>())
     private val _selectedIds = MutableStateFlow(emptySet<Long>())
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    private val _refreshError = MutableStateFlow<String?>(null)
+    val refreshError: StateFlow<String?> = _refreshError.asStateFlow()
+
+    init {
+        refreshRecipes()
+    }
 
     private val _uiState: StateFlow<RecipeListUiState> = combine(
         repository.getRecipes(),
@@ -128,6 +139,22 @@ class RecipeListViewModel(
                     repository.setFavourite(ids)
                 }
             }
+        }
+    }
+
+    fun refreshRecipes() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            _refreshError.value = null
+            when (val result = repository.refreshRecipes()) {
+                is ApiResult.Success -> { /* data flows automatically via Room */ }
+                is ApiResult.Error -> {
+                    _refreshError.value = result.message
+                        ?: "Unknown error: ${result.exception.message}"
+                }
+                is ApiResult.Loading -> { /* not used here */ }
+            }
+            _isRefreshing.value = false
         }
     }
 }

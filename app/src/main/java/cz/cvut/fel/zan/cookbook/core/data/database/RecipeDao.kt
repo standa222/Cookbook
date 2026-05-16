@@ -43,6 +43,9 @@ interface RecipeDao {
     @Query("DELETE FROM recipe_ingredient WHERE recipeId = :recipeId")
     suspend fun deleteLinksByRecipeId(recipeId: Long)
 
+    @Query("SELECT id FROM recipes WHERE id IN (:ids)")
+    suspend fun getExistingIds(ids: Set<Long>): List<Long>
+
     @Query("UPDATE recipes SET isFavorite = NOT isFavorite WHERE id = :id")
     suspend fun toggleFavourite(id: Long)
 

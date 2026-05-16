@@ -2,6 +2,8 @@ package cz.cvut.fel.zan.cookbook.di
 
 import androidx.room.Room
 import cz.cvut.fel.zan.cookbook.core.data.database.AppDatabase
+import cz.cvut.fel.zan.cookbook.core.data.remote.RecipeApiService
+import cz.cvut.fel.zan.cookbook.core.data.remote.RecipeRemoteDataSource
 import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepository
 import cz.cvut.fel.zan.cookbook.core.data.repository.IngredientRepositoryImpl
 import cz.cvut.fel.zan.cookbook.core.data.repository.RecipeRepository
@@ -26,14 +28,16 @@ val appModule = module {
     single { get<AppDatabase>().recipeDao() }
     single { get<AppDatabase>().ingredientDao() }
 
-    // TODO A4 Network - REST API
+    // ── Network ───────────────────────────────────────────────────────────
+    single { RecipeApiService() }
+    single { RecipeRemoteDataSource(apiService = get()) }
 
     // Repository
     single<RecipeRepository> {
         RecipeRepositoryImpl(
             recipeDao = get(),
             ingredientDao = get(),
-            // TODO A4 Network - REST API
+            remoteDataSource = get(),
         )
     }
 

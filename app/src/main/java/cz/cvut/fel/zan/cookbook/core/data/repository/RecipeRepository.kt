@@ -1,5 +1,6 @@
 package cz.cvut.fel.zan.cookbook.core.data.repository
 
+import cz.cvut.fel.zan.cookbook.core.data.ApiResult
 import cz.cvut.fel.zan.cookbook.core.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +17,5 @@ interface RecipeRepository {
     fun searchRecipes(query: String): Flow<List<Recipe>>
     suspend fun toggleFavourite(id: Long)
     suspend fun setFavourite(ids: Set<Long>)
+    suspend fun refreshRecipes(): ApiResult<Unit>
 }

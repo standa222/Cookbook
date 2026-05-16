@@ -41,7 +41,12 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +66,9 @@ fun RecipeListScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val refreshError by viewModel.refreshError.collectAsStateWithLifecycle()
+    val pullToRefreshState = rememberPullToRefreshState()
 
     when (val state = uiState) {
         is RecipeListUiState.Loading -> {
@@ -81,6 +89,10 @@ fun RecipeListScreen(
                 onEvent = viewModel::onEvent,
                 onNavigateToDetail = onNavigateToDetail,
                 onNavigateToEditor = onNavigateToEditor,
+                isRefreshing = isRefreshing,
+                refreshError = refreshError,
+                pullToRefreshState = pullToRefreshState,
+                onRefresh = { viewModel.refreshRecipes() },
                 modifier = modifier,
             )
         }
@@ -94,97 +106,127 @@ private fun RecipeListContent(
     onEvent: (RecipeListEvent) -> Unit,
     onNavigateToDetail: (Long) -> Unit,
     onNavigateToEditor: (Long?) -> Unit,
+    isRefreshing: Boolean,
+    refreshError: String?,
+    pullToRefreshState: PullToRefreshState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val tabs = listOf("All", "Favourites")
 
-    Scaffold(
-        floatingActionButton = {
-            if (!uiState.isSelectionMode) {
-                FloatingActionButton(onClick = { onNavigateToEditor(null) }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Recipe")
+
+    Box(
+        modifier = Modifier.pullToRefresh(
+            isRefreshing = isRefreshing,
+            state = pullToRefreshState,
+            onRefresh = onRefresh,
+        )
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                if (!uiState.isSelectionMode) {
+                    FloatingActionButton(onClick = { onNavigateToEditor(null) }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Recipe")
+                    }
                 }
-            }
-        },
-        topBar = {
-            if (uiState.isSelectionMode) {
-                SelectionTopBar(
-                    selectedCount = uiState.selectedIds.size,
-                    onClearSelection = { onEvent(RecipeListEvent.ClearSelection) },
-                    onSelectAll = { onEvent(RecipeListEvent.SelectAll) },
-                    onDeleteSelected = { onEvent(RecipeListEvent.DeleteSelected) },
-                    onFavouriteSelected = { onEvent(RecipeListEvent.FavouriteSelected) }
-                )
-            } else {
-                OutlinedTextField(
-                    value = uiState.searchQuery,
-                    onValueChange = { onEvent(RecipeListEvent.SearchQueryChanged(it)) },
-                    label = { Text("Search Recipes") },
-                    singleLine = true,
+            },
+            topBar = {
+                if (uiState.isSelectionMode) {
+                    SelectionTopBar(
+                        selectedCount = uiState.selectedIds.size,
+                        onClearSelection = { onEvent(RecipeListEvent.ClearSelection) },
+                        onSelectAll = { onEvent(RecipeListEvent.SelectAll) },
+                        onDeleteSelected = { onEvent(RecipeListEvent.DeleteSelected) },
+                        onFavouriteSelected = { onEvent(RecipeListEvent.FavouriteSelected) }
+                    )
+                } else {
+                    OutlinedTextField(
+                        value = uiState.searchQuery,
+                        onValueChange = { onEvent(RecipeListEvent.SearchQueryChanged(it)) },
+                        label = { Text("Search Recipes") },
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                // All / Favourites Toggle
+                SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                )
-            }
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // All / Favourites Toggle
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                tabs.forEachIndexed { index, label ->
-                    SegmentedButton(
-                        selected = (index == 1 && uiState.showFavouritesOnly) || (index == 0 && !uiState.showFavouritesOnly),
-                        onClick = { onEvent(RecipeListEvent.ToggleFavouritesFilter(index == 1)) },
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = tabs.size),
-                        label = { Text(label) }
-                    )
+                        .padding(horizontal = 16.dp)
+                ) {
+                    tabs.forEachIndexed { index, label ->
+                        SegmentedButton(
+                            selected = (index == 1 && uiState.showFavouritesOnly) || (index == 0 && !uiState.showFavouritesOnly),
+                            onClick = { onEvent(RecipeListEvent.ToggleFavouritesFilter(index == 1)) },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = tabs.size
+                            ),
+                            label = { Text(label) }
+                        )
+                    }
                 }
-            }
 
-            // Category Filters
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                items(Category.entries) { category ->
-                    FilterChip(
-                        selected = category in uiState.selectedCategories,
-                        onClick = { onEvent(RecipeListEvent.ToggleCategoryFilter(category)) },
-                        label = { Text(category.name) },
-                        leadingIcon = if (category in uiState.selectedCategories) {
-                            { Icon(Icons.Default.Check, null, Modifier.size(18.dp)) }
-                        } else null
-                    )
+                // Category Filters
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    items(Category.entries) { category ->
+                        FilterChip(
+                            selected = category in uiState.selectedCategories,
+                            onClick = { onEvent(RecipeListEvent.ToggleCategoryFilter(category)) },
+                            label = { Text(category.name) },
+                            leadingIcon = if (category in uiState.selectedCategories) {
+                                { Icon(Icons.Default.Check, null, Modifier.size(18.dp)) }
+                            } else null
+                        )
+                    }
                 }
-            }
 
-            // List
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(uiState.recipes, key = { it.id }) { recipe ->
-                    RecipeCard(
-                        recipe = recipe,
-                        isSelected = recipe.id in uiState.selectedIds,
-                        isSelectionMode = uiState.isSelectionMode,
-                        onCardClick = {
-                            if (uiState.isSelectionMode) onEvent(RecipeListEvent.ToggleSelection(recipe.id))
-                            else onNavigateToDetail(recipe.id)
-                        },
-                        onLongClick = { onEvent(RecipeListEvent.ToggleSelection(recipe.id)) },
-                        onFavouriteClick = { onEvent(RecipeListEvent.ToggleFavourite(recipe.id)) }
-                    )
+                // List
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(uiState.recipes, key = { it.id }) { recipe ->
+                        RecipeCard(
+                            recipe = recipe,
+                            isSelected = recipe.id in uiState.selectedIds,
+                            isSelectionMode = uiState.isSelectionMode,
+                            onCardClick = {
+                                if (uiState.isSelectionMode) onEvent(
+                                    RecipeListEvent.ToggleSelection(
+                                        recipe.id
+                                    )
+                                )
+                                else onNavigateToDetail(recipe.id)
+                            },
+                            onLongClick = { onEvent(RecipeListEvent.ToggleSelection(recipe.id)) },
+                            onFavouriteClick = { onEvent(RecipeListEvent.ToggleFavourite(recipe.id)) }
+                        )
+                    }
                 }
             }
+        }
+        PullToRefreshDefaults.Indicator(
+            state = pullToRefreshState,
+            isRefreshing = isRefreshing,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
+    }
+    refreshError?.let { error ->
+        LaunchedEffect(error) {
+            // show snackbar or Toast
         }
     }
 }
