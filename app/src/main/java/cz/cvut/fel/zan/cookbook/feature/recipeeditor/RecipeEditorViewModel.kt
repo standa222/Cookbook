@@ -207,7 +207,7 @@ class RecipeEditorViewModel(
         }
 
         val areStepsValid = uiState.steps.isNotEmpty() && uiState.steps.all { step ->
-            step.description.isNotBlank() && step.prepTime > 0
+            step.description.isNotBlank()
         }
 
         uiState = uiState.copy(

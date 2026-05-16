@@ -4,6 +4,6 @@ data class InstructionStep(
     val id: Long = 0,
     val stepNumber: Int,
     val description: String,
-    val prepTime: Int, // in minutes
+    val prepTime: Int = 0,
     val timerMinutes: Int? = null, // optional timer for this step
 )
