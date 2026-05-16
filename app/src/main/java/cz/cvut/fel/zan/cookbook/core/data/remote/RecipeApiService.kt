@@ -11,7 +11,7 @@ import io.ktor.http.ContentType.Application.Json
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private val IDS = listOf("52772", "52988", "53151", "52905")
+private val IDS = listOf("52772", "52988", "52770", "53006")
 
 class RecipeApiService {
     private val client = HttpClient(Android) {
