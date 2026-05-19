@@ -67,7 +67,7 @@ class RecipeListViewModel(
         _selectedIds,
     ) { recipes, query, favOnly, categories, selectedIds ->
         val filtered = recipes
-            .filter { it.title.contains(query, ignoreCase = false) }
+            .filter { it.title.contains(query.trim(), ignoreCase = true) }
             .filter { if (favOnly) it.isFavorite else true }
             .filter { categories.isEmpty() || it.category in categories }
 
